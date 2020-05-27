@@ -1,0 +1,45 @@
+{
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "noUnusedLocals": false,
+    "noImplicitAny": false,
+    "allowUnusedLabels": false,
+    "noUnusedParameters": false,
+    "target": "es5",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "typeRoots": [
+      "node_modules/@types",
+      "src/types"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": false,
+    "forceConsistentCasingInFileNames": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": false,
+    "noEmit": true,
+    "jsx": "react",
+    "baseUrl": "src",
+    "paths": {
+      "@/*": ["*"],
+      "@images/*": ["src/assets/images/*"]
+    }
+  },
+  "include": [
+    "src",
+    "static.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}

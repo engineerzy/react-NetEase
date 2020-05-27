@@ -1,0 +1,49 @@
+$theme-color: #d43c33;
+$border_color: rgba(0, 0, 0, 0.1);
+
+
+@mixin climp ($num: 2) {
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+    -webkit-line-clamp: $num;
+    overflow: hidden;
+}
+
+// 水平方向边框
+@mixin horizontal {
+	width: 100%;
+	height: 1px;
+	left: 0;
+}
+// 垂直方向边框
+@mixin vertical {
+	width: 1px;
+	height: 100%;
+	top: 0;
+}
+
+@mixin border_1px($dir: left, $color: $border_color) {
+	& {
+		position: relative;
+	}
+	&:after {
+		content: '';
+		position: absolute;
+		transform: scaleY(0.5);
+		transform-origin: top left;
+		background-color: $color;
+		@if $dir == left {
+			@include vertical;
+			left: 0;
+		} @else if $dir == right {
+			@include vertical;
+			right: 0;
+		} @else if $dir == top {
+			@include horizontal;
+			top: 0;
+		} @else if $dir == bottom {
+			@include horizontal;
+			bottom: 0;
+		}
+	}
+}

@@ -1,0 +1,7 @@
+webpack/
+main/
+dist/
+public/
+static.d.ts
+postcss.config.js
+node_modules/

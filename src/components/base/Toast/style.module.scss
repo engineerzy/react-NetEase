@@ -1,0 +1,38 @@
+.g-toast-wrapper {
+  position: fixed;
+  width: 100%;
+  top: 0;
+  bottom: 0;
+}
+.g-toast-content {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 68%;
+  min-width: 36%;
+  color: #ffffff;
+  font-size: 14px;
+  background-color: rgba(0,0,0,.8);
+  padding: 10px 12px;
+  border-radius: 6px;
+  box-shadow: 0 0 6px rgba(0,0,0,.8);
+  > p {
+    text-align: center;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+  }
+}
+.g-toast-icon {
+  text-align: center;
+ 
+}
+.g-toast-mask {
+  position: fixed;
+  width: 100%;
+  top: 0px;
+  bottom: 0px;
+  background-color: rgba(0,0,0,.5);
+}

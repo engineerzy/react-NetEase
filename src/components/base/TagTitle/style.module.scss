@@ -1,0 +1,18 @@
+.tag-title {
+  padding-left: 6px;
+  // border-left: 2px solid $theme-color;
+  margin-bottom: 16px;
+  position: relative;
+  padding-left: 10px;
+  &:after {
+    content: '';
+    width: 2px;
+    background-color: $theme-color;
+    height: 16px;
+    position: absolute;
+    margin-top: -8px;
+    top: 50%;
+    left: 0px;
+   
+  }
+}

@@ -1,0 +1,48 @@
+.g-songtitle-wrapper {
+	width: 100%;
+	height: .56rem;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	@include border_1px(bottom)
+}
+.g-songtitle-left {
+	flex: 1;
+	height: 100%;
+	padding: 6px 0;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: flex-start;
+}
+.songtitle-left-name {
+	font-size: 16px;
+	@include climp(1)
+}
+.songtitle-left-info {
+	font-size: 12px;
+	color: #888888;
+	>i {
+		display: inline-block;
+		width: 12px;
+		height: 8px;
+		margin-right: 3px;
+		background: url('~@/assets/images/music_icon.png');
+		background-size: 166px 97px;
+	}
+	@include climp(1)
+}
+.g-songtitle-right {
+	height: 100%;
+	padding: 0 10px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+.g-songtitle-play {
+	display: inline-block;
+	width: 22px;
+	height: 22px;
+	background: url('~@/assets/images/music_icon.png') -24px 0 ;
+	background-size: 166px 97px;
+}

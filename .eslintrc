@@ -1,0 +1,62 @@
+{
+	"parser": "@typescript-eslint/parser",
+	"extends": [
+		"plugin:react/recommended",
+		"plugin:@typescript-eslint/recommended"
+	],
+	"plugins": [
+		"@typescript-eslint",
+		"react"
+	],
+	"env": {
+		"browser": true,
+		"node": true,
+		"commonjs": true,
+		"es6": true
+	},
+	"settings": {
+		"react": {
+			"pragma": "React",
+			"version": "detect"
+		}
+	},
+	"parserOptions": {
+		"ecmaVersion": 2019,
+		"sourceType": "module",
+		"ecmaFeatures": {
+			"jsx": true
+		}
+	},
+	"rules": {
+		// 类型声明属性后面不用加双引号
+		"@typescript-eslint/member-delimiter-style": 0,
+		// 允许在声明之前使用变量
+		"@typescript-eslint/no-use-before-define": 0,
+		"react/no-render-return-value": 0,
+		// 允许声明any类型
+		"@typescript-eslint/no-explicit-any": 0,
+		// 函数没有声明返回类型
+		"@typescript-eslint/explicit-function-return-type": 0,
+		// 避免组件引入后被提示未被使用
+		"react/jsx-uses-vars": 2,
+		// 避免react未被使用
+		"react/jsx-uses-react": 2,
+		//禁止使用alert confirm prompt
+		"no-alert": 0,
+		//禁止修改const声明的变量
+		"no-const-assign": 2,
+		// 禁止使用eval
+		"no-eval": 2,
+		//禁用var定义变量
+		"no-var": 2,
+		// 必须使用全等
+		"eqeqeq": 2,
+		// 禁止 function 定义中出现重名参数
+		"no-dupe-args": 2,
+		// 禁止对象字面量中出现重复的 key
+		"no-dupe-keys": 2,
+		// 禁止出现空函数.如果一个函数包含了一条注释，它将不会被认为有问题。
+		"no-empty-function": 1,
+		"no-unused-vars": [1, {"vars": "all", "args": "after-used", "ignoreRestSiblings": false}]
+	}
+}

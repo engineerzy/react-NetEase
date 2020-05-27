@@ -1,0 +1,27 @@
+.g-songsheet-wrapper {
+	display: inline-block;
+	width: 33%;
+	position: relative;
+	margin-bottom: 10px;
+}
+.g-songsheet-pic {
+	width: 100%;
+	padding-bottom: 100%;
+	position: relative;
+	overflow: hidden;
+	>img {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		vertical-align: middle;
+		width: 100%;
+	}
+}
+.g-songsheet-text {
+	font-size: 12px;
+	color: #333333;
+	text-align: left;
+	padding: 6px 0 0 6px;
+	@include climp(2)
+}

@@ -1,0 +1,28 @@
+.app-top-wrapper {
+  width: 100%;
+  height: .84rem;
+  padding: 0px 10px;
+  display: flex;
+  z-index: 1;
+  justify-content: space-between;
+  align-items: center;
+  background-color: $theme-color;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+.app-top-logo {
+  width: 158px;
+  height: 30px;
+  font-size: 25px;
+  background: url('~@/assets/images/topbar.png') 0px -20px no-repeat;
+}
+.app-top-download {
+  width: 100px;
+  line-height: 36px;
+  font-size: 16px;
+  color: $theme-color;
+  text-align: center;
+  border-radius: 18px;
+  background-color: #fff;
+}

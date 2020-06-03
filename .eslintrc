@@ -28,6 +28,8 @@
 		}
 	},
 	"rules": {
+		// interface 命名不必加前缀I
+		"@typescript-eslint/interface-name-prefix": 0,
 		// 类型声明属性后面不用加双引号
 		"@typescript-eslint/member-delimiter-style": 0,
 		// 允许在声明之前使用变量

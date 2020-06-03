@@ -29,7 +29,7 @@ const routes = [
 		title: '搜索'
 	},
 	{
-		path: '/song',
+		path: '/song/:id',
 		component: Loadable({
 			loader: () => import('@/pages/song'),
 			loading: Load

@@ -46,7 +46,7 @@ const reducer = (state: any, action: Action) => {
 }
 
 const initState = {
-	detail: []
+	detail: [],
 }
 
 const useGetSheetDetail = (id: number) => {
@@ -105,9 +105,9 @@ const Playlist = (props: any) => {
 				<h3>歌曲列表</h3>
 				<div>
 					{state.detail.tracks?.map((item, i) => (
-						<div className={styles['song-item-wrapper']}>
+						<div className={styles['song-item-wrapper']} key={i}>
 							<div className={styles['song-item-index']}>{i + 1}</div>
-							<SongTitle name={item.name} author={item.ar} album={item.name} />
+							<SongTitle id={item.id} name={item.name} author={item.ar} album={item.name} />
 						</div>
 					))}
 				</div>

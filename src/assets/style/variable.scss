@@ -32,6 +32,7 @@ $border_color: rgba(0, 0, 0, 0.1);
 		transform: scaleY(0.5);
 		transform-origin: top left;
 		background-color: $color;
+		z-index: 1;
 		@if $dir == left {
 			@include vertical;
 			left: 0;

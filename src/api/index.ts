@@ -77,3 +77,27 @@ export const getNewAlbum = () => {
 		method: 'GET'
 	})
 }
+/**
+ *获取歌词
+ *
+ * @param {*} id
+ * @returns
+ */
+export const getLyric = id => {
+	return fetch('/lyric', {
+		method: 'GET',
+		params: {
+			id: id
+		}
+	})
+}
+/**
+ *
+ *获取最新的音乐
+ * @returns
+ */
+export const getNewSong = () => {
+	return fetch('/personalized/newsong', {
+		method: 'GET',
+	})
+}

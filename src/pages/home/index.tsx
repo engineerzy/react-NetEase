@@ -5,7 +5,8 @@ import TagTitle from '@/components/base/TagTitle'
 import SongRemd from '@/components/base/SongRemd'
 import SongTitle from '@/components/base/SongTitle'
 import Footer from '@/components/base/Footer'
-import { getRecommends, getNewAlbum } from '@/api'
+import { getRecommends, getNewSong } from '@/api'
+import Toast from '@/components/base/Toast'
 import styles from './style.module.scss'
 
 type Action = {
@@ -29,12 +30,13 @@ const initState = {
 const useGetRecommends = () => {
 	const [state, dispatch] = useReducer(reducer, initState)
 	useEffect(() => {
-		Promise.all([getRecommends(), getNewAlbum()])
+		Promise.all([getRecommends(), getNewSong()])
 			.then((res: any) => {
 				dispatch({ type: 'sheet', payload: res[0].result.slice(0, 6) })
-				dispatch({ type: 'album', payload: res[1].albums.slice(0, 10) })
+				dispatch({ type: 'album', payload: res[1].result.slice(0, 10) })
 			})
 			.catch(err => {
+				Toast.error({content: '出错啦！'})
 				console.log('err ==>', err)
 			})
 	}, [])
@@ -65,8 +67,9 @@ export default function Home() {
 					{state.album.map((item, index) => (
 						<SongTitle
 							key={index}
+							id={item.id}
 							name={item.name}
-							author={item.artists || []}
+							author={item.song.artists || []}
 							album={item.name}
 							quality={item.type}
 						/>

@@ -8,13 +8,13 @@
     "noUnusedParameters": false,
     "target": "es5",
     "lib": [
+			"es6",
       "dom",
-      "dom.iterable",
       "esnext"
     ],
     "typeRoots": [
       "node_modules/@types",
-      "src/types"
+			"src/types",
     ],
     "allowJs": true,
     "skipLibCheck": true,
@@ -36,7 +36,7 @@
   },
   "include": [
     "src",
-    "static.d.ts"
+		"static.d.ts"
   ],
   "exclude": [
     "node_modules",

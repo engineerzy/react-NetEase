@@ -1,16 +1,4 @@
 .home-content-wrapper {
 	height: 100%;
-	padding: calc(1.24rem + 20px) 0px 0px;
-}
-.home-content-album {
-	padding-left: 10px;
-}
-.home-content-main {
-	display: flex;
-	justify-content: space-between;
-	flex-wrap: wrap;
-	padding-bottom: 24px;
-	> a {
-		width: 33%;
-	}
+	padding: calc(1.24rem) 0px 0px;
 }

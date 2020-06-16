@@ -16,7 +16,7 @@ module.exports = merge(webpackBaseConfig, {
 		// 打包输出地方
 		// contentBase: '../dist',
 		host: '127.0.0.1',
-		port: 8081,
+		port: 3000,
 		hot: true,
 		// 不打印信息到控制台，包括错误以及警告信息，启用friendly-errors-webpack-plugin插件来输出错误及警告信息
 		quiet: true,

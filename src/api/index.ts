@@ -101,3 +101,81 @@ export const getNewSong = () => {
 		method: 'GET',
 	})
 }
+/**
+ *获取排行榜
+ *
+ * @param {number} idx
+ * @returns
+ */
+export const getTopList = (idx: number) => {
+	return fetch('/top/list', {
+		method: 'GET',
+		params: {
+			idx
+		}
+	})
+}
+/**
+ *获取热搜列表
+ *
+ * @returns
+ */
+export const getHotSearchList = () => {
+	return fetch('/search/hot', {
+		method: 'GET',
+		params: {}
+	})
+}
+/**
+ *获取热搜详情列表
+ *
+ * @returns
+ */
+export const getHotSearchDetailList = () => {
+	return fetch('/search/hot/detail', {
+		method: 'GET'
+	})
+}
+/**
+ *
+ *获取搜索建议
+ * @param {string} keywords
+ * @returns
+ */
+export const getSearchSuggest = (keywords: string, type = 'mobile') => {
+	return fetch('/search/suggest', {
+		method: 'GET',
+		params: {
+			type,
+			keywords
+		}
+	})
+}
+/**
+ *
+ *搜索
+ * @param {string} keywords
+ * @returns
+ */
+export const getSearchList = (keywords: string) => {
+	return fetch('/search', {
+		method: 'GET',
+		params: {
+			keywords
+		}
+	})
+}
+/**
+ *获取搜索多重匹配
+ *
+ * @param {string} keywords
+ * @returns
+ */
+export const getSearchMultimatch = (keywords: string) => {
+	return fetch('search/multimatch', {
+		method: 'GET',
+		params: {
+			keywords
+		}
+	})
+}

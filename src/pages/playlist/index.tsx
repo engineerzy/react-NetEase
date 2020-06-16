@@ -1,4 +1,5 @@
 import React, { useState, useReducer, useEffect, useCallback } from 'react'
+import { RouteComponentProps } from 'react-router-dom'
 import Tag from '@/components/base/Tag'
 import PlayCount from '@/components/base/PlayCount'
 import Avatar from '@/components/base/Avatar'
@@ -26,7 +27,6 @@ const useExpand = (content: string) => {
 	const [showExpand, setExpand] = useState<boolean>(false)
 	const [icon, set] = useState<boolean>(false)
 	const setIcon = useCallback(() => set(c => !c), [])
-
 	useEffect(() => {
 		if (isOverWrapper(content)) {
 			setExpand(true)
@@ -58,8 +58,8 @@ const useGetSheetDetail = (id: number) => {
 	return { state, dispatch }
 }
 
-const Playlist = (props: any) => {
-	const { state } = useGetSheetDetail(props.match.params.id)
+export default function Playlist(props: RouteComponentProps<{id: string}>) {
+	const { state } = useGetSheetDetail(+props.match.params.id)
 	const htmlStr = state.detail?.description?.replace(/\n/g, '<br />')
 	const { showExpand, icon, setIcon } = useExpand(htmlStr || '')
 
@@ -117,4 +117,3 @@ const Playlist = (props: any) => {
 	)
 }
 
-export default Playlist

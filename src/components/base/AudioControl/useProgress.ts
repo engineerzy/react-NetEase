@@ -17,7 +17,8 @@ const useTouch: UseTouch = (fn, [ref, wrapper, progress, currentPercent]) => {
 	const isTouching = useRef<boolean>(false)
 	const percentRef = useRef<number>(0)
 	const handlePercentWidth = (percent: number): void => {
-		ref.current.style.left = `${(wrapperRect.current.width * percent).toFixed(2)}px`
+		const baseWidth = (wrapperRect.current.width * percent).toFixed(2)
+		ref.current.style.left = `${+percent === 1 ? +baseWidth - 8 : +baseWidth }px`
 		progress.current.style.width = `${(percent * wrapperRect.current.width + 4).toFixed(2)}px`
 	}
 

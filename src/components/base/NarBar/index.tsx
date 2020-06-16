@@ -1,5 +1,5 @@
 import React, { useRef, useCallback } from 'react';
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import styles from './style.module.scss';
 
 type INav = {
@@ -15,20 +15,22 @@ type NavProps = INav & {
 const NAVS: Array<INav> = [
   {
     name: '推荐音乐',
-    route: '/playlist/*'
+    route: '/home/recommend'
   },
   {
     name: '热歌榜',
-    route: '/'
+    route: '/home/hot'
   },
   {
     name: '搜索',
-    route: '/'
+    route: '/home/search'
   }
 ]
 
 const useNavRoute = () => {
-  const currentIndex = useRef<number>(0)
+	const {pathname} = useLocation()
+	const index = NAVS.findIndex(nav => nav.route === pathname)
+  const currentIndex = useRef<number>(index)
   const handleClick = useCallback(
     (index) => {
       if(index === currentIndex.current) return;

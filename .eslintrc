@@ -1,11 +1,11 @@
 {
-	"parser": "@typescript-eslint/parser",
+	// "parser": "@typescript-eslint/parser",
 	"extends": [
 		"plugin:react/recommended",
-		"plugin:@typescript-eslint/recommended"
+		// "plugin:@typescript-eslint/recommended"
 	],
 	"plugins": [
-		"@typescript-eslint",
+		// "@typescript-eslint",
 		"react"
 	],
 	"env": {
@@ -28,6 +28,9 @@
 		}
 	},
 	"rules": {
+		"@typescript-eslint/no-inferrable-types": 0,
+		"@typescript-eslint/no-unused-vars": 0,
+		"prefer-const": 0,
 		// interface 命名不必加前缀I
 		"@typescript-eslint/interface-name-prefix": 0,
 		// 类型声明属性后面不用加双引号

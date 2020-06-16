@@ -48,3 +48,25 @@ $border_color: rgba(0, 0, 0, 0.1);
 		}
 	}
 }
+
+@mixin border_all ($color: rgba(0,0,0,.1)) {
+	& {
+		position: relative;
+	}
+	&::after {
+		position: absolute;
+    z-index: 2;
+    content: "";
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    box-sizing: border-box;
+    width: 200%;
+    height: 200%;
+    -webkit-transform-origin: top left;
+    -ms-transform-origin: top left;
+		transform-origin: top left;
+		border: 1px solid $color;
+		transform: scale(0.5);
+	}
+}

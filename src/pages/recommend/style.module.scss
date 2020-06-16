@@ -1,0 +1,15 @@
+.recommend-wrapper {
+	padding-top: 20px;
+}
+.recommend-content-album {
+	padding-left: 10px;
+}
+.recommend-content-main {
+	display: flex;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	padding-bottom: 24px;
+	> a {
+		width: 33%;
+	}
+}

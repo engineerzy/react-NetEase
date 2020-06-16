@@ -56,7 +56,7 @@ export default function useAudioPlay(url: string, fn?: (...args: any[]) => void)
 	}
 	function onTimeupdate() {
 		if (!state.isPlaying) return
-		fn && fn.call(null, Audio.current.currentTime)
+		fn && fn.call(null, Audio.current.currentTime * 1000)
 		audioDispatch({ type: 'currentTimeStamp', payload: Audio.current.currentTime })
 	}
 

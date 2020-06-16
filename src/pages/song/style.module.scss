@@ -90,6 +90,9 @@
 		@include climp(1);
 	}
 }
+.song-lyric-content::-webkit-scrollbar {
+	display: none;
+}
 .high-light-lyric {
 	color: #ffffff;
 	font-size: 14px;

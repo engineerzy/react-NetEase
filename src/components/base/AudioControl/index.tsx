@@ -18,21 +18,21 @@ export default function AudioControl(props: Audiocontrol) {
 	const progress = useRef<HTMLDivElement>(null)
 	const wrapper = useRef<HTMLDivElement>(null)
 	const { state, Audio, togglePlay } = useAudio(props.url, props.onTimeUpdate)
-	const useTogglePlay = useCallback(
-		() => {
-			togglePlay(!state.isPlaying)
-			props.onPlayChange && props.onPlayChange(!state.isPlaying)
+	const useTogglePlay = useCallback(() => {
+		togglePlay(!state.isPlaying)
+		props.onPlayChange && props.onPlayChange(!state.isPlaying)
+	}, [state.isPlaying])
+	const { percent } = useProgress(
+		val => {
+			Audio.current.currentTime = Audio.current.duration * val
 		},
-		[state.isPlaying],
+		[point, wrapper, progress, Audio.current?.currentTime / Audio.current?.duration || 0],
 	)
-	const { percent } = useProgress((val) => {
-		Audio.current.currentTime = Audio.current.duration * val
-	}, [point, wrapper, progress, Audio.current?.currentTime / Audio.current?.duration || 0])
-	
+
 	return (
 		<div className={`${styles['control-wrapper']} ${props.className}`}>
 			<div className={styles['progress-wrapper']}>
-				<span>{formatTime(Audio.current?.duration * percent|| 0)}</span>
+				<span>{formatTime(Audio.current?.duration * percent || 0)}</span>
 				<div className={styles['progress-main-wrapper']} ref={wrapper}>
 					<div className={styles['progress-content']}></div>
 					<div className={styles['progress-mask']} ref={progress}></div>

@@ -145,5 +145,9 @@ html,
 body,
 :global(#root) {
 	height: 100%;
+	
 }
-
+:global(#root) {
+	max-width: 750px;
+	margin: 0 auto;
+}

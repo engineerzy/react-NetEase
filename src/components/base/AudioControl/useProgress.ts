@@ -1,6 +1,6 @@
 import { useEffect, useRef, RefObject } from 'react'
 
-type UseTouch = (
+type UseProgress = (
 	fn: (...args: any[]) => void,
 	inputs: [
 		RefObject<HTMLElement>,
@@ -12,13 +12,13 @@ type UseTouch = (
 	percent: number
 }
 
-const useTouch: UseTouch = (fn, [ref, wrapper, progress, currentPercent]) => {
+const useProgress: UseProgress = (fn, [ref, wrapper, progress, currentPercent]) => {
 	const wrapperRect = useRef<DOMRect>(null)
 	const isTouching = useRef<boolean>(false)
 	const percentRef = useRef<number>(0)
 	const handlePercentWidth = (percent: number): void => {
 		const baseWidth = (wrapperRect.current.width * percent).toFixed(2)
-		ref.current.style.left = `${+percent === 1 ? +baseWidth - 8 : +baseWidth }px`
+		ref.current.style.left = `${ +baseWidth - 4 }px`
 		progress.current.style.width = `${(percent * wrapperRect.current.width + 4).toFixed(2)}px`
 	}
 
@@ -66,4 +66,4 @@ const useTouch: UseTouch = (fn, [ref, wrapper, progress, currentPercent]) => {
 	return { percent: percentRef.current }
 }
 
-export default useTouch
+export default useProgress

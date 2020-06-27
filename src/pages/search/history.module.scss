@@ -1,0 +1,36 @@
+.history-wrapper {
+	width: 100%;
+	margin-top: 10px;
+}
+.history-item {
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	line-height: 45px;
+
+}
+.icon-time {
+	font-size: 18px;
+	margin-right: 10px;
+	color: #999899;
+}
+.history-item-name {
+	flex: 1;
+	font-size: 14px;
+	color: #333333;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	> p {
+		flex: 1;
+	}
+	@include border_1px(bottom);
+	> i {
+		float: right;
+		color: #999899;
+		font-size: 18px;
+		padding: 0 0 0 10px;
+		cursor: pointer;
+	}
+}

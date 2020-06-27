@@ -6,7 +6,8 @@
     "noImplicitAny": false,
     "allowUnusedLabels": false,
     "noUnusedParameters": false,
-    "target": "es5",
+		"target": "es5",
+		"downlevelIteration": true,
     "lib": [
 			"es6",
       "dom",

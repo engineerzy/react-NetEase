@@ -6,11 +6,13 @@ export interface Props {
 	name: string
 	id: number
 	alias: string[]
+	isHighLight?: boolean
+	type?: string
 	artist?: any[]
 }
 
 export default function SongCover(props: Props) {
-	const { url, name, id, alias, artist } = props
+	const { url, name, id, alias, artist, type } = props
 	return (
 		<a className={styles['songcover-wrapper']}>
 			<figure className={styles['songcover-img']}>
@@ -18,7 +20,7 @@ export default function SongCover(props: Props) {
 			</figure>
 			<div className={styles['songcover-content']}>
 				<p className={styles['songcover-content-name']}>
-					{name}
+					{type || '歌手'}: {name}
 					{alias && alias.length >= 1 && `(${alias.join('/')})`}
 				</p>
 				{artist && artist.length >= 1 && (
@@ -34,6 +36,8 @@ SongCover.defaultProps = {
 	url: '',
 	name: '',
 	id: 0,
+	type: '',
+	isHighLight: false,
 	alias: [],
 	artist: [],
 }

@@ -1,5 +1,6 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react'
+import React, { useState, useCallback, useEffect, useRef, RefObject } from 'react'
 import { useAsynceffect } from '@/hooks'
+import { tools } from '@/utils'
 import AudioControl from '@/components/base/AudioControl'
 import { getMusicDetail, getLyric, getSongUrl } from '@/api'
 import LyricParse from './_eslyric'
@@ -10,7 +11,11 @@ export interface UseGetSongSource {
 	(id: number): { lyricStr: string; url: string }
 }
 export interface UseLyricAction {
-	(lyrics: string): { Lyric: LyricParse; line: number }
+	(lyrics: string, isEnd: RefObject<boolean>): {
+		Lyric: LyricParse
+		line: number
+		setLine: (line: number) => void
+	}
 }
 export interface UseGetSongDetail {
 	(ids: number): any
@@ -39,14 +44,17 @@ const useGetSongDetail: UseGetSongDetail = ids => {
 	}, [ids])
 	return state
 }
-/**
+/**2
  *获取歌曲播放播放资源
  *获取歌词及播放url
  * @param {number} id 歌曲id
  * @returns
  */
 const useGetSongSource: UseGetSongSource = id => {
-	const [state, set] = useState<{ lyricStr: string; url: string }>({ lyricStr: '', url: '' })
+	const [state, set] = useState<{ lyricStr: string; url: string }>({
+		lyricStr: '',
+		url: '',
+	})
 	useAsynceffect(async () => {
 		const result: [any, any] = await Promise.all([getLyric(id), getSongUrl(id)])
 		set({
@@ -56,27 +64,35 @@ const useGetSongSource: UseGetSongSource = id => {
 	}, [id])
 	return state
 }
+
 /**
  * 控制歌词高亮以及滚动行为
  *
  * @param {string} lyrics
  * @returns {{ Lyric: LyricParse; line: number }}
  */
-const useLyricAction: UseLyricAction = lyrics => {
+const useLyricAction: UseLyricAction = (lyrics, isEnd) => {
 	const lyricInstance = useRef<LyricParse>(null)
 	const [line, setLine] = useState<number>(0)
 	useEffect(() => {
-		lyricInstance.current = new LyricParse(lyrics, ({ lineNum }) => {
-			if(lineNum === line) return;
-			setLine(lineNum)
-			if (lineNum <= 4) return;
-			document
-				.querySelector('#lyric')
-				.scrollTo({ left: 0, top: (lineNum - 4) * 30, behavior: 'smooth' })
-		})
+		lyricInstance.current = new LyricParse(
+			lyrics,
+			tools.throttle(({ lineNum }) => {
+				if(isEnd.current) return;
+				setLine(line => lineNum < line ? line : lineNum);
+			}, 100),
+		)
 	}, [lyrics])
-	return { Lyric: lyricInstance.current, line }
+	
+	useEffect(() => {
+		const top = line <= 4 ? 0 : (line - 4) * 30
+		document
+			.querySelector('#lyric')
+			.scrollTo({ left: 0, top, behavior: 'smooth' })
+	}, [line])
+	return { Lyric: lyricInstance.current, line, setLine }
 }
+
 /**
  *切换歌曲播放状态
  *
@@ -98,8 +114,7 @@ const useTogglePlay: UseTogglePlay = Lyric => {
 				transform: `${baseTrans} rotate(${status ? 0 : '-18'}deg)`,
 				animationPlayState: status ? 'running' : 'paused',
 			})
-			if (!Lyric) return;
-			status ? Lyric.play() : Lyric.stop()
+			Lyric && Lyric.togglePlay()
 		},
 		[Lyric],
 	)
@@ -107,17 +122,28 @@ const useTogglePlay: UseTogglePlay = Lyric => {
 }
 
 export default function Song(props: any) {
+	const isEnd = useRef<boolean>(false)
+	const audioRef = useRef<React.FC>(null)
 	const state = useGetSongDetail(props.match.params.id)
 	const { lyricStr, url } = useGetSongSource(props.match.params.id)
-	const { Lyric, line } = useLyricAction(lyricStr)
+	const { Lyric, line, setLine } = useLyricAction(lyricStr, isEnd)
 	const { playStyle, togglePlay } = useTogglePlay(Lyric)
+	const resetLyric = useCallback(() => {
+		togglePlay(false)
+		isEnd.current = true
+		console.log(audioRef)
+		// AudioControl.reset()
+		setLine(0)
+	},[])
 	return (
 		<div className={styles['song-wrapper']}>
 			<div
 				className={styles['song-background']}
 				style={{ backgroundImage: `url(${state.al?.picUrl})` }}></div>
 			<div className={styles['song-content']}>
-				<div className={styles['song-needlebar']} style={{ transform: playStyle.transform }}></div>
+				<div
+					className={styles['song-needlebar']}
+					style={{ transform: playStyle.transform }}></div>
 				<div
 					className={styles['song-disc-wrapper']}
 					style={{ animationPlayState: playStyle.animationPlayState }}>
@@ -131,12 +157,16 @@ export default function Song(props: any) {
 					<h5 className={styles['lyric-title']}>
 						{state.name}
 						<span style={{ margin: '0 4px' }}>-</span>
-						<span>{state.ar?.reduce((t, c) => t.concat(c.name), []).join('/')}</span>
+						<span>
+							{state.ar?.reduce((t, c) => t.concat(c.name), []).join('/')}
+						</span>
 					</h5>
 					<div className={styles['song-lyric-content']} id="lyric">
 						<ul>
 							{Lyric?.lines.map((lrc, i) => (
-								<li key={i} className={i === line ? styles['high-light-lyric'] : ''}>
+								<li
+									key={i}
+									className={i === +line ? styles['high-light-lyric'] : ''}>
 									{lrc.txt}
 								</li>
 							))}
@@ -147,6 +177,7 @@ export default function Song(props: any) {
 					url={url}
 					onPlayChange={togglePlay}
 					onTimeUpdate={Lyric?.seek.bind(Lyric)}
+					onEnd={resetLyric}
 					controls={false}
 					className={styles['song-play-ctr']}
 				/>

@@ -5,6 +5,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin')
+const OptimizeCssWebpackPlugin = require('optimize-css-assets-webpack-plugin')
 const envsConfig = require('./env-config');
 const happyThreadPool = Happypack.ThreadPool({size: os.cpus().length});
 
@@ -69,6 +70,7 @@ const plugins = [
 	new CleanWebpackPlugin(),
 	// 抽离css文件，避免打包到一个文件中，
 	new MiniExtractPlugin({
+		ignoreOrder: true,
 		filename: 'assets/css/[name].[contenthash:8].css',
 		chunkFilename: 'assets/css/[name].[contenthash:8].chunk.css',
 	}),
@@ -90,7 +92,9 @@ const plugins = [
 	new HtmlWebpackPlugin({
 		title: 'my app',
 		template: path.resolve(__dirname, '../public/index.html')
-	})
+	}),
+	// 压缩css文件
+	new OptimizeCssWebpackPlugin({})
 ]
 
 module.exports = {

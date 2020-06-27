@@ -1,7 +1,7 @@
 import { useEffect, useReducer, useCallback, useRef } from 'react'
 
 type Action = {
-	type: 'currentTimeStamp' | 'timeStamp' | 'canPlay' | 'isPlaying'
+	type: 'currentTimeStamp' | 'timeStamp' | 'canPlay' | 'isPlaying' | 'end'
 	payload?: any
 }
 
@@ -10,6 +10,7 @@ const initState = {
 	timeStamp: 0,
 	canPlay: false,
 	isPlaying: false,
+	end: false
 }
 
 const createAudio = (src: string) => {
@@ -29,6 +30,8 @@ const reducer = (state: typeof initState, action: Action) => {
 			return { ...state, canplay: action.payload }
 		case 'isPlaying':
 			return { ...state, isPlaying: action.payload }
+		case 'end':
+			return {...state, end: true}
 		default:
 			return state
 	}
@@ -44,8 +47,8 @@ export default function useAudioPlay(url: string, fn?: (...args: any[]) => void)
 		audioDispatch({ type: 'timeStamp', payload: Audio.current.duration })
 		audioDispatch({ type: 'canPlay', payload: true })
 	}
-	function onEnded(val) {
-		console.log(val)
+	function onEnded() {
+		audioDispatch({ type: 'end'})
 	}
 	function onPlay() {
 		audioDispatch({ type: 'currentTimeStamp', payload: Audio.current.currentTime })

@@ -2,6 +2,7 @@ import React, {
 	PropsWithChildren,
 	useReducer,
 	useCallback,
+	useRef,
 } from 'react'
 import Context from './context'
 import { viewMapToStore, storeMapToView } from './utils'
@@ -14,17 +15,11 @@ export interface Store {
 }
 
 export interface UseDispatch {
-	(Stores: Store, commit: Commit): Dispatch
+	(state: { [T: string]: any }, effects: Effects, commit: Commit): Dispatch
 }
 
 export interface Props {
 	Stores: Store
-}
-
-const useTeemoSelect = (Store: Store) => {
-	return useCallback((fn: Select) => {
-		return fn(storeMapToView(Store.state))
-	}, [])
 }
 
 const useTeemoReducer = (Stores: Store) => {
@@ -40,29 +35,29 @@ const useTeemoReducer = (Stores: Store) => {
 	return useReducer(storeReducer, Stores.state)
 }
 
-const useTeemoDispatch: UseDispatch = (Stores, commit) => {
-	const select = useTeemoSelect(Stores)
-	const dispatch = useCallback(async (action: Action) => {
-		const [effectKey, modelName] = viewMapToStore(action.type)
-		const effect = Stores.effects[effectKey]
+const useTeemoDispatch: UseDispatch = (state, effects, commit) => {
+	const currentState = useRef(state)
+	currentState.current = state
+	const put = useCallback(async (action: Action) => {
+		const [effectKey] = viewMapToStore(action.type)
+		const effect = effects[effectKey]
 		try {
-			return await effect(action.payload, {
-				state: Stores.state[modelName],
+			await effect(action.payload, {
 				commit,
-				select,
-				dispatch,
+				put,
+				select: (fn: Select) => fn(storeMapToView(currentState.current)),
 			})
 		} catch (error) {
 			throw Error(error)
 		}
 	}, [])
-	return dispatch
+	return put
 }
 
 export default function Provider(props: PropsWithChildren<Props>) {
 	const { Stores, children } = props
 	const [state, commit] = useTeemoReducer(Stores)
-	const dispatch = useTeemoDispatch(Stores, commit)
+	const dispatch = useTeemoDispatch(state, Stores.effects, commit)
 	return (
 		<Context.Provider value={{ state, commit, dispatch }}>
 			{children}

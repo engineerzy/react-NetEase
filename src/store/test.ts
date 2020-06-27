@@ -1,7 +1,7 @@
 function getServerData (payload: number) {
 	return new Promise((resolve, reject) => {
 		setTimeout(() => {
-				resolve(payload * 2)
+				resolve(payload + 2)
 		}, 1000);
 	})
 }
@@ -20,12 +20,12 @@ export default {
 		serverCount: 0
 	},
 	effects: {
-		async getServerData (payload: any, { commit, dispatch, select }) {
+		async getServerData (payload: any, {commit, put, select }) {
 			const result = await getServerData(1)
 			commit({type: 'test/addCount', payload: result})
-			const myState = select(state => state.test.count)
+			await put({type: 'test/getServerData1', payload: result})
+			const myState = select(state => state)
 			console.log(myState)
-			dispatch({type: 'test/getServerData1', payload: result})
 		},
 		async getServerData1 (payload: number, {commit}) {
 			const result = await getServerData1(payload)

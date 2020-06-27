@@ -42,7 +42,6 @@ export default class Lyric implements ILyric {
 		this.handler = hanlder
 		this.state = STATE_PAUSE
 		this.curNum = 0
-
 		this.init()
 	}
 

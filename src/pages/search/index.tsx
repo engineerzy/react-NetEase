@@ -1,22 +1,33 @@
-import React, { useState, useCallback, useEffect } from 'react'
-import SongCover from '@/components/SongCover'
-import SongTitleIndex from '@/components/base/SongTitleIndex'
+import React, {
+	useState,
+	useCallback,
+	useEffect,
+	useReducer,
+	useMemo,
+	memo,
+	PropsWithChildren,
+} from 'react'
+import SearchHistory from './search-history'
+import SearchResult from './search-result'
 import { useAsynceffect } from '@/hooks'
-import {
-	getHotSearchList,
-	getSearchList,
-	getSearchSuggest,
-	getSearchMultimatch,
-} from '@/api'
-import { tools } from '@/utils'
+import { connect } from '@/Teemo'
+import { getHotSearchList, getSearchSuggest } from '@/api'
+import { storage } from '@/utils/tools'
 import styles from './search.module.scss'
+export interface Props {
+	multiMatchset: { [T: string]: any }
+	searchResultList: any[]
+	searchKeywords: string
+	getSearchResult: (keyword: string) => void
+	clearSearchResult: () => void
+}
 
 /**
  *处理搜索输入框输入事件
  *
  * @returns
  */
-const useSearchInput = () => {
+const useSearchInput = (clearSearchResult: () => void) => {
 	const [value, setValue] = useState<string>('')
 	const [focus, setFocus] = useState<boolean>(false)
 	const [matchSuggest, setMatch] = useState<any[]>([])
@@ -32,6 +43,7 @@ const useSearchInput = () => {
 	const clearValue = useCallback(() => {
 		setValue('')
 		setMatch([])
+		clearSearchResult()
 	}, [])
 	const onFocus = useCallback(() => {
 		setFocus(true)
@@ -39,31 +51,81 @@ const useSearchInput = () => {
 	const onBlur = useCallback(() => {
 		setFocus(false)
 	}, [])
-	return { onChange, clearValue, onFocus, onBlur, focus, value, matchSuggest }
+	return {
+		onChange,
+		clearValue,
+		onFocus,
+		onBlur,
+		setValue,
+		focus,
+		value,
+		matchSuggest,
+	}
 }
+
 /**
  *处理搜索结果
  *
  * @returns
  */
-const useSearchHandle = (searchValue: string, isFocus: boolean) => {
-	const [searchList, setSearchList] = useState<any[]>([])
-	const [multiMatchset, setMultiMatchset] = useState<any>({})
-	const handleSearch = useCallback(async keyword => {
-		const lists: any[] = await Promise.all([
-			getSearchList(keyword),
-			getSearchMultimatch(keyword),
-		])
-		setSearchList(lists[0].result.songs)
-		setMultiMatchset(lists[1].result)
+const useSearchHandle = (
+	searchValue: string,
+	isFocus: boolean,
+	getSearchResult: (keyword: string) => void,
+) => {
+	const handleSearch = useCallback(keyword => {
+		getSearchResult(keyword)
 	}, [])
 	useEffect(() => {
 		if (!!!searchValue || isFocus) {
-			setSearchList([])
-			setMultiMatchset({})
+			// dispatch({ type: 'SearchResult', payload: { match: {}, search: [] } })
 		}
 	}, [searchValue, isFocus])
-	return { searchList, multiMatchset, handleSearch }
+	return { handleSearch }
+}
+
+/**
+ *搜索历史events
+ *
+ * @param {(keyword: string) => void} handleSearch
+ * @returns
+ */
+const useHistoryEvent = (
+	searchKeywords: string,
+	handleSearch: (keyword: string) => void,
+	setValue: (keyword: string) => void,
+) => {
+	const [searchHistory, setSearchHistory] = useState([])
+	useEffect(() => {
+		const historyStorages = storage.getLocalStorage<any[]>('search_hot_history')
+		setSearchHistory(historyStorages || [])
+	}, [])
+	useEffect(() => {
+		if (!!!searchKeywords || searchHistory.includes(searchKeywords)) return;
+ 		setSearchHistory([...searchHistory, searchKeywords])
+		const historyStorages = storage.getLocalStorage<any[]>('search_hot_history')
+		if (historyStorages) {
+			storage.setLocalStorage('search_hot_history', [
+				searchKeywords,
+				...searchHistory,
+			])
+		} else {
+			storage.setLocalStorage('search_hot_history', [searchKeywords])
+		}
+	}, [searchKeywords])
+	const onClearItem = useCallback(
+		(his: string) => {
+			const newHistory = searchHistory.filter(e => e !== his)
+			storage.setLocalStorage('search_hot_history', newHistory)
+			setSearchHistory(newHistory)
+		},
+		[searchHistory],
+	)
+	const onClickItem = useCallback((his: string) => {
+		setValue(his)
+		handleSearch(his)
+	}, [])
+	return { onClearItem, onClickItem, searchHistory }
 }
 
 /**
@@ -84,91 +146,69 @@ const useGetHotList = () => {
 const SuggestItem = (props: {
 	keyword: string
 	handleClick: (...args: any[]) => void
+	setValue: (value: string) => void
 }) => {
 	const handleClick = useCallback(() => {
 		props.handleClick(props.keyword)
-	}, [])
-	return (
-		<li className={styles['search-suggest-item']} onClick={handleClick}>
-			<i className={`${styles['suggest-item-icon']} iconfont iconsearch`}></i>
-			<div className={styles['suggest-item-content']}>{props.keyword}</div>
-		</li>
+		props.setValue(props.keyword)
+	}, [props.keyword])
+
+	return useMemo(
+		() => (
+			<li className={styles['search-suggest-item']} onClick={handleClick}>
+				<i className={`${styles['suggest-item-icon']} iconfont iconsearch`}></i>
+				<div className={styles['suggest-item-content']}>{props.keyword}</div>
+			</li>
+		),
+		[props.keyword, props.handleClick, props.setValue],
 	)
 }
 
 // 热门搜索组件
-const HotSearch = (props: {
-	keyword: string
-	handleClick: (...args: any[]) => void
-}) => {
-	const handleClick = useCallback(() => {
-		props.handleClick(props.keyword)
-	}, [])
-	return (
-		<li className={styles['search-hot-item']} onClick={handleClick}>
-			{props.keyword}
-		</li>
-	)
-}
+const HotSearch = memo(
+	(props: {
+		keyword: string
+		handleClick: (...args: any[]) => void
+		setValue: (value: string) => void
+	}) => {
+		const handleClick = useCallback(() => {
+			props.handleClick(props.keyword)
+			props.setValue(props.keyword)
+		}, [])
+		return (
+			<li className={styles['search-hot-item']} onClick={handleClick}>
+				{props.keyword}
+			</li>
+		)
+	},
+)
 
-// 搜索结果组件
-const SearchResult = (props: { multiMatchset: any; searchList: any[] }) => {
-	const { multiMatchset, searchList } = props
-	return (
-		<>
-			<h5 className={styles['search-result-matchtext']}>最佳匹配</h5>
-			<ul className={styles['search-result-wrapper']}>
-				<li>
-					{multiMatchset.artist && multiMatchset.artist.length >= 1 && (
-						<SongCover
-							id={multiMatchset.artist[0]?.picId}
-							name={multiMatchset.artist[0]?.name}
-							url={multiMatchset.artist[0]?.img1v1Url}
-							alias={multiMatchset.artist[0]?.alias}
-						/>
-					)}
-				</li>
-				<li>
-					{multiMatchset.album && multiMatchset.album.length >= 1 && (
-						<SongCover
-							id={multiMatchset.album[0].picId}
-							name={multiMatchset.album[0].name}
-							url={multiMatchset.album[0].blurPicUrl}
-							alias={multiMatchset.album[0].alias}
-							artist={multiMatchset.album[0].artists}
-						/>
-					)}
-				</li>
-				{searchList.length >= 1 && searchList.map(item => (
-					<SongTitleIndex
-						key={item.id}
-						id={item.id}
-						name={item.name}
-						ar={item.artists}
-						quality={item.rtype}
-						album={item.album}
-					/>
-				))}
-			</ul>
-		</>
-	)
-}
-
-export default function Search() {
+function Search(props: PropsWithChildren<Props>) {
+	const {
+		searchResultList,
+		multiMatchset,
+		searchKeywords,
+		getSearchResult,
+		clearSearchResult,
+	} = props
+	const hots = useGetHotList()
 	const {
 		onChange,
 		clearValue,
 		onFocus,
 		onBlur,
+		setValue,
 		focus,
 		value,
 		matchSuggest,
-	} = useSearchInput()
-	const hots = useGetHotList()
-	const { searchList, multiMatchset, handleSearch } = useSearchHandle(
-		value,
-		focus,
+	} = useSearchInput(clearSearchResult)
+	const { handleSearch } = useSearchHandle(value, focus, getSearchResult)
+	const { onClearItem, onClickItem, searchHistory } = useHistoryEvent(
+		searchKeywords,
+		handleSearch,
+		setValue,
 	)
+
 	return (
 		<div className={styles['search-wrapper']}>
 			<div className={styles['search-input-wrapper']}>
@@ -190,10 +230,13 @@ export default function Search() {
 					)}
 				</div>
 			</div>
-			{searchList &&
-			searchList.length >= 1 &&
-			Object.keys(multiMatchset).length >= 1 ? (
-				<SearchResult multiMatchset={multiMatchset} searchList={searchList} />
+			{searchResultList &&
+			searchResultList.length >= 1 ? (
+				<SearchResult
+					keyword={value}
+					multiMatchset={multiMatchset}
+					searchList={searchResultList}
+				/>
 			) : (
 				<div className={styles['search-hot']}>
 					{matchSuggest && matchSuggest.length >= 1 ? (
@@ -202,6 +245,7 @@ export default function Search() {
 								<SuggestItem
 									key={i}
 									keyword={suggest.keyword}
+									setValue={setValue}
 									handleClick={handleSearch}
 								/>
 							))}
@@ -214,10 +258,16 @@ export default function Search() {
 									<HotSearch
 										key={i}
 										keyword={hot.first}
+										setValue={setValue}
 										handleClick={handleSearch}
 									/>
 								))}
 							</ul>
+							<SearchHistory
+								historys={searchHistory}
+								onClearItem={onClearItem}
+								onClickItem={onClickItem}
+							/>
 						</>
 					)}
 				</div>
@@ -225,3 +275,18 @@ export default function Search() {
 		</div>
 	)
 }
+
+const mapStoreToProps = store => ({
+	searchResultList: store.search.searchResultList,
+	multiMatchset: store.search.multiMatchset,
+	searchKeywords: store.search.searchKeywords,
+})
+
+const mapDispatchToProps = (commit, dispatch) => ({
+	getSearchResult: (payload: { keyword: string }) =>
+		dispatch({ type: 'search/getSearchResult', payload }),
+	clearSearchResult: () =>
+		dispatch({ type: 'search/clearSearchResult', payload: {} }),
+})
+
+export default connect(mapStoreToProps, mapDispatchToProps)(Search)

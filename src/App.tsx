@@ -3,7 +3,7 @@ import { Router, Route, Switch, Redirect } from 'react-router-dom'
 import { history } from '@/utils'
 import routes from '@/router'
 import models from '@/store'
-import createStore, {Provider } from '@/Teemo'
+import createStore, { Provider } from '@/Teemo'
 
 const stores = createStore(models)
 export default function App() {

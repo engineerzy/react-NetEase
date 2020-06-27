@@ -1,4 +1,4 @@
-import React, { useRef, useCallback } from 'react'
+import React, { useRef, useCallback, useEffect  } from 'react'
 import useProgress from './useProgress'
 import useAudio from './useAudio'
 import styles from './style.module.scss'
@@ -11,17 +11,29 @@ export type Audiocontrol = {
 	className?: string
 	onPlayChange?: (...args: any[]) => void
 	onTimeUpdate?: (...args: any[]) => void
+	onEnd?: (...args: any[]) => void
 }
 
-export default function AudioControl(props: Audiocontrol) {
+interface IAudioControl extends React.FC<Audiocontrol> {
+	reset(): void
+}
+
+export default function AudioControl (props: Audiocontrol) {
 	const point = useRef<HTMLElement>(null)
 	const progress = useRef<HTMLDivElement>(null)
 	const wrapper = useRef<HTMLDivElement>(null)
 	const { state, Audio, togglePlay } = useAudio(props.url, props.onTimeUpdate)
+	useEffect(() => {
+		if(state.end) {
+			props.onEnd && props.onEnd()
+		}
+	}, [state.end]);
+
 	const useTogglePlay = useCallback(() => {
 		togglePlay(!state.isPlaying)
 		props.onPlayChange && props.onPlayChange(!state.isPlaying)
-	}, [state.isPlaying])
+	}, [state.isPlaying]);
+
 	const { percent } = useProgress(
 		val => {
 			Audio.current.currentTime = Audio.current.duration * val
@@ -62,3 +74,4 @@ AudioControl.defaultProps = {
 	url: '',
 	controls: false,
 }
+

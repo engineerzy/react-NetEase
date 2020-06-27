@@ -1,0 +1,12 @@
+.async-loading-wrapper {
+	width: 100%;
+	position: relative;
+}
+.async-icon {
+	width: 30px;
+	height: 30px;
+	position: absolute;
+	top: 60px;
+	left: 50%;
+	transform: translateX(-50%);
+}

@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { getTopList } from '@/api'
 import { useAsynceffect } from '@/hooks'
 import SongTitleIndex from '@/components/base/SongTitleIndex'
+import AsyncLoading from '@/components/AsyncLoading'
 import styles from './style.module.scss'
 
 function formatTime(time: number): string {
@@ -15,37 +16,39 @@ function formatTime(time: number): string {
 const useGetHotTopList = () => {
 	const [state, set] = useState<any>({})
 	useAsynceffect(async () => {
-		const result: any = await getTopList(1)
-		set(result.playlist)
+			const result: any = await getTopList(1)
+			set(result.playlist)
 	}, [])
 	return state
 }
 
-export default function Hot ()  {
+export default function Hot() {
 	const state = useGetHotTopList()
 	return (
-		<div>
-			<div className={styles['hot-wrapper']}>
+		<>
+			<div className={styles['hot-top-wrapper']}>
 				<div className={styles['hot-logo']}></div>
 				<p className={styles['hot-update-time']}>
 					更新日期: {formatTime(state.updateTime)}
 				</p>
 			</div>
-			<ul>
-				{state.tracks?.slice(0, 20).map((track, index) => (
-					<SongTitleIndex
-						key={track.id}
-						id={track.id}
-						name={track.name}
-						ar={track.ar || []}
-						album={track.name}
-						quality={track.type}
-						index={index}
-						isRank
-						isColor
-					/>
-				))}
-			</ul>
-		</div>
+			<AsyncLoading className={styles['hot-list-wrapper']} type="bars" width={60} height={60} isComplete={state.tracks?.length > 0}>
+				<ul>
+					{state.tracks?.slice(0, 20).map((track, index) => (
+						<SongTitleIndex
+							key={track.id}
+							id={track.id}
+							name={track.name}
+							ar={track.ar || []}
+							album={track.name}
+							quality={track.type}
+							index={index}
+							isRank
+							isColor
+						/>
+					))}
+				</ul>
+			</AsyncLoading>
+		</>
 	)
 }

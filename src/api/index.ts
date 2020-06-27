@@ -179,3 +179,31 @@ export const getSearchMultimatch = (keywords: string) => {
 		}
 	})
 }
+/**
+ *获取歌手描述
+ *
+ * @param {*} id
+ * @returns
+ */
+export const getArtistDesc = (id: number) => {
+	return fetch('/artist/desc', {
+		method: 'GET',
+		params: {
+			id
+		}
+	})
+}
+/**
+ *获取歌手热门歌曲
+ *
+ * @param {number} id
+ * @returns
+ */
+export const getArtistHotSong = (id: number) => {
+	return fetch('/artist/top/song', {
+		method: 'GET',
+		params: {
+			id
+		}
+	})
+}

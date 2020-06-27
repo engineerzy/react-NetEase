@@ -29,7 +29,7 @@ const formatIndex = (index: number) => {
 
 export default function SongTitleIndex(props: Props) {
 	return (
-		<div className={styles['index-item-wrapper']} key={props.index}>
+		<li className={styles['index-item-wrapper']} key={props.index}>
 			{props.isRank && (
 				<div
 					className={styles['index-item-index']}
@@ -43,7 +43,7 @@ export default function SongTitleIndex(props: Props) {
 				author={props.ar}
 				album={props.name}
 			/>
-		</div>
+		</li>
 	)
 }
 

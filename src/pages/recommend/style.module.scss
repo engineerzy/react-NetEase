@@ -2,9 +2,11 @@
 	padding-top: 20px;
 }
 .recommend-content-album {
+	min-height: 180px;
 	padding-left: 10px;
 }
 .recommend-content-main {
+	min-height: 160px;
 	display: flex;
 	justify-content: space-between;
 	flex-wrap: wrap;
